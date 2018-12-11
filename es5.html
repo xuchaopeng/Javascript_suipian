@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ES5(非常用碎片)</title>
+</head>
+
+<body>
+热 今日热点 上海地域360  去掉
+
+
+    <script type="text/javascript">
+    var book = {
+        _year: 2017,
+        edition: 1
+    }
+    //1、Object.creat 可以帮助创建一个对象
+    var schoolbag = Object.create(null, {
+        instruction: {
+            value: {
+                _date: 2000,
+                _kuanshi: 'HaiLu',
+                _weight: 100
+            },
+            writable: false, //设置属性是否可以被重写
+            configurable: false, //能否通过delete删除属性而从新定义
+            enumerable: false //设置属性是否可以被for in遍历
+        }
+    });
+    //注意:  属性的设置只对value起作用,说开了，只是对instruction的值有约束作用
+    console.log(schoolbag)
+    schoolbag.instruction = {
+        hehe: 'xiugai'
+    }
+    schoolbag.instruction._date = 3000;
+    console.log(schoolbag.instruction._date)
+    for (var k in schoolbag) {
+        console.log(schoolbag[k]);
+    }
+
+    //2、Object.defineProperty() 设置对象中的某个属性具有某个特性
+    var person = {
+        _age: 25,
+        type: 'cn'
+    }
+    Object.defineProperty(person, 'name', {
+        writable: false,
+        value: 'xuchaopeng'
+    });
+    Object.defineProperty(person, 'age', {
+        set: function(newage) {
+            if (newage > 18) {
+                this.type = 'qsn'
+            } else if (newage > 30) {
+                this.type = 'qn'
+            } else if (newage > 35) {
+                this.type = 'zn'
+            } else {
+                this.type = 'ln'
+            }
+            this._age = newage;
+        },
+        get: function() {
+            return this._age
+        }
+    })
+    //注意： 一个普通对象，它们有4种数据属性的默认值都是true , 一但调用Object.defineProperty()方法,如果不指定configurable、enumerable、writable特性的默认值都是false ; 属性configurable=false之后，不能再调用该函数操作该对象了 ，因为其也代表了不容许再进行配置 ; 访问器属性（enumerable,configurable,get,set）不能直接定义,必须用Object.defineProperty来定义 ; 使用set\get，一般通过设置一个属性得到其它属性;
+    person.name = 'lz';
+    console.log(person, 'old');
+    person.age = 40;
+    console.log(person, 'new')
+
+    //3、Object.defineProperties()方法。这个方法接收两个对象参数：第一 个对象是要添加和修改其属性的对象，第二个对象的属性与第一个对象中要添加或修改的属性一一对应。
+    var me = {
+        age: 10
+    }
+    Object.defineProperties(me, {
+        _year: {
+            value: 2017
+        },
+        age: {
+            value: 20
+        },
+        year: {
+            get: function() {
+                return this._year;
+            },
+            set: function(newValue) {
+                if (newValue > 2004) {
+                    this._year = 2005;
+                }
+            }
+        }
+    });
+    //注意：需要注意的是，这样创建的数据属性，和普通对象声明的值不一样，普通对象声明的值，四个数据属性默认值都是true，而这样创建的对象的属性数据属性的默认值都为false
+    me.year = 2018;
+    console.log(me)
+
+    //4、Object.getOwnPropertyDescriptor可以获取到，对象的属性，同时直接(descriptor.configurable）获取到该属性的值
+    var descriptor = Object.getOwnPropertyDescriptor(book, "_year");
+    //注意：Object.getOwnPropertyDescriptor()方法只能用于实例属 性，要取得原型属性的描述符，必须直接在原型对象上调用 Object.getOwnPropertyDescriptor()方法
+    console.log(descriptor)
+
+    //5、Object.keys()方法。这个方法 接收一个对象作为参数，返回一个包含所有可枚举属性的字符串数组。
+    function Person() {}
+    Person.prototype.name = "Nicholas";
+    Person.prototype.age = 29;
+    Person.prototype.job = "Software Engineer";
+    Person.prototype.sayName = function() {};
+    var keys = Object.keys(Person.prototype);
+    console.log(keys,'原型');
+
+    var p1 = new Person();
+	p1.name = "Rob";
+	p1.age = 31;
+	var p1keys = Object.keys(p1);
+	console.log(p1keys,'实例');
+
+	//6、如果你想要得到所有实例属性，无论它是否可枚举，都可以使用 Object.getOwnPropertyNames() 方法
+	var keyts = Object.getOwnPropertyNames(Person.prototype);
+	console.log(keyts,'all');
+
+	//7、Object.getPrototypeOf 相当于获取函数或者对象的_proto_ 如一个构造函数，实例一个对象，Object.getPrototypeOf（这个对象）就会访问到构造函数的prototype，Object.getPrototypeOf（构造函数）就会访问到Function的prototype。
+
+	//8、冻结对象
+	var xcp = {
+		a:'cc',
+		b:'kaka',
+		c:1,
+	}
+	var xcp1 = {
+		a:'cc',
+		b:'kaka',
+		c:1,
+	}
+	var xcp2 = {
+		a:'cc',
+		b:'kaka',
+		c:1,
+	}
+
+	Object.seal(xcp);
+	console.log(Object.isSealed(xcp),'xcp对象是否被seal冻结');
+	Object.freeze(xcp1); //除了seal(obj)之外，其中的属性值也不能修改，即:writable:false,configureable:false
+	console.log(Object.isFrozen(xcp1),'xcp1对象是否被freeze冻结');
+	Object.preventExtensions(xcp2);//方法用于锁住对象属性，使其不能够拓展，也就是不能增加新的属性，但是属性的值仍然可以更改，也可以把属性删除，Object.isExtensible用于判断对象是否可以被拓展。
+	console.log(Object.isExtensible(xcp2),'xcp2对象是否可以被拓展');
+    </script>
+</body>
+
+</html>
