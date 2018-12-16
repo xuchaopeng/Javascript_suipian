@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>作用域及闭包</title>
+</head>
+
+<body>
+  <h3>闭包</h3>
+  <p>闭包是由函数以及创建该函数的词法环境组合而成。这个环境包含了这个闭包创建时所能访问的所有局部变量。</p>
+  <h3>es6解构</h3>
+  <script>
+    var person = {
+      name: '小明',
+      age: 20,
+      gender: 'male',
+      passport: 'G-12345678',
+      school: 'No.4 middle school',
+      address: {
+        city: 'Beijing',
+        street: 'No.1 Road',
+        zipcode: '100001'
+      }
+    };
+    var { name, address: { city, zip } } = person;
+
+    let [x, [y, z]] = ['hello', ['JavaScript', 'ES6']];
+    //https://github.com/mqyqingfeng/Blog 预计写四个系列：JavaScript深入系列、JavaScript专题系列、ES6系列、React系列。
+  </script>
+</body>
+
+</html>

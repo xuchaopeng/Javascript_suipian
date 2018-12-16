@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JavaScript基本概念</title>
+</head>
+
+<body>
+  <h3>原始类型|值类型|引用类型</h3>
+  <script>
+    Object.prototype.toString.call({})       //[object Object]
+    Object.prototype.toString.call([])       //[object Array]
+    Object.prototype.toString.call([])       //[object Number]
+    Object.prototype.toString.call(Date)     //[object Function]
+    Object.prototype.toString.call(new Date) //[object Date]
+  </script>
+  <script>
+    //ECMAScript 有 5 种原始类型（基本类型 / 值类型）  Undefined、Null、Boolean、Number 、String
+    // undefined - 如果变量是 Undefined 类型的
+    // boolean - 如果变量是 Boolean 类型的
+    // number - 如果变量是 Number 类型的
+    // string - 如果变量是 String 类型的
+    // object - 如果变量是一种引用类型或 Null 类型的
+
+    //引用类型：对象（Object）、数组（Array）、函数（Function）
+
+    //值类型和引用类型的区别
+    //值类型： 1、保存在栈中，占用空间固定 ; 2、保存与复制的是值本身 ; 3 、使用typeof检测数据的类型 ;
+    // 4、基本类型数据是值类型
+
+    //引用类型: 1、占用空间不固定，保存在堆中; 2、保存与复制的是指向对象的一个指针 ;3、 使用instanceof检测数据类型 ; 4、使用new()方法构造出的对象是引用型
+
+    // == 和 ====
+    //引用类型的变量，==和===只会判断引用的地址是否相同，而不会判断对象具体里属性以及值是否相同
+    // =  引用类型的变量，是一个引用地址的拷贝，基本类型值是一个值得拷贝
+
+    1 == 1;    //true
+    1 === 1;   //true
+    [0] == [0]; //false
+    [0][0] == [0][0];    //true
+    [0][0] === [0][0];   //true
+    [0].toString() == [0].toString();   //true
+  </script>
+  <h3>隐式, 显式, 名义和鸭子类型</h3>
+  <script>
+    //类型转换  转成字符串 toString() String()
+    var a = 10;
+    a.toString()  // '10'
+    a.toString(2) // '1010' 2进制
+    a.toString(8) // '12' 8进制
+    a.toString(16) // 'A' 16进制
+    true.toString() // 'true'
+
+    //类型转换  转成数字
+    //1、parseInt() 方法首先查看位置 0 处的字符，判断它是否是个有效数字；如果不是，该方法将返回 NaN，不再继续执行其他操作。但如果该字符是有效数字，该方法将查看位置 1 处的字符，进行同样的测试。这一过程将持续到发现非有效数字的字符为止，此时 parseInt() 将把该字符之前的字符串转换成数字。
+    //字符串中包含的数字字面量会被正确转换为数字，比如 "0xA" 会被正确转换为数字 10。不过，字符串 "22.5" 将被转换成 22，因为对于整数来说，小数点是无效字符。
+    parseInt("0xA") // 10
+    parseInt("56.9") // 56
+    parseInt("12345red") //12345
+    parseInt("red") // NaN
+
+    //parseInt() 方法还有基模式，可以把二进制、八进制、十六进制或其他任何进制的字符串转换成整数
+    parseInt("AF", 16) // 175
+    parseInt("10", 2) // 2
+    parseInt("10", 8) // 8
+
+    //2、parseFloat() 方法与 parseInt() 方法的处理方式相似，从位置 0 开始查看每个字符，直到找到第一个非有效的字符为止，然后把该字符之前的字符串转换成整数。(第一个出现的小数点是有效字符。如果有两个小数点，第二个小数点将被看作无效的)
+    // parseFloat() 方法的另一不同之处在于，字符串必须以十进制形式表示浮点数，而不是用八进制或十六进制。该方法会忽略前导 0，所以八进制数 0102 将被解析为 102。对于十六进制数 0xA，该方法将返回 NaN，因为在浮点数中，x 不是有效字符。
+    parseFloat("12345red") // 12345
+    parseFloat("11.2") //11.2
+
+    //强制类型转换
+    //Boolean()  当要转换的值是至少有一个字符的字符串、非 0 数字或对象时，Boolean() 函数将返回 true。如果该值是空字符串、数字 0、undefined 或 null，它将返回 false。
+    //Number() 函数的强制类型转换与 parseInt() 和 parseFloat() 方法的处理方式相似，只是它转换的是整个值，而不是部分值。
+    Number('1.2.3') //NaN  整个字符串值不能转换成数字
+    Number(false) // 特别的 0 
+    Number(true) // 特别的 1
+    //String()  它可把任何值转换成字符串 ,
+    //String()强制转换成字符串和调用 toString() 方法的唯一不同之处在于，对 null 和 undefined 值强制类型转换可以生成字符串而不引发错误;
+
+    //1、隐式转换为Boolean
+    //当js需要一个布尔值的时候，任何值都会被转成treu、false
+    //下面的值被转换为 false 
+    // undefined , null , false , -0 , +0 , NaN , ''
+    //所有其他被默认true
+
+    //2、字符串的隐式转换
+
+    //3、对象隐式装换  只有在 JavaScript 表达式或语句中需要用到数字或字符串时，对象才被隐式转换。需要以下三个步骤(对象转换成数字)：
+    //num1:调用 valueOf()。如果结果是原始值（不是一个对象），则将其转换为一个数字。
+    //num2:否则，调用 toString() 方法。如果结果是原始值，则将其转换为一个数字。
+    //num3:否则，抛出一个类型错误。
+    function returnObject() { return {} }
+    3 * { valueOf: returnObject, toString: returnObject } //TypeError: Cannot convert object to primitive value
+    3 * { valueOf: function () { return 5 } } // 15
+    //对象隐式转换为字符串,第一步和第二步的顺序会调换： 先尝试 toString() 进行转换，如果不是原始值，则再尝试使用 valueOf()
+    ++[[]][+[]] + [+[]] // '10'
+
+    //鸭子类型  鸭子类型的通俗说法是：“如果它走起路来像鸭子，叫起来也是鸭子，那么它就是鸭子
+    //js是一门动态类型的语言 面向接口编程，而不是面向实现编程  js变量类型不定
+    var duck = {
+      duckSinging: function () {
+        console.log('嘎嘎嘎');
+      }
+    };
+    var chicken = {
+      duckSinging: function () {
+        console.log('嘎嘎嘎');
+      }
+    };
+    var choir = [];    // 合唱团  
+    var joinChoir = function (animal) {
+      if (animal && typeof animal.duckSinging === 'function') {
+        choir.push(animal);
+        console.log('恭喜加入合唱团');
+        console.log('合唱团已有成员数量:' + choir.length);
+      }
+    };
+    joinChoir(duck);    // 恭喜加入合唱团  
+    joinChoir(chicken);    // 恭喜加入合唱团 
+  </script>
+  <h3>this</h3>
+  <script>
+    //在es5中，this 永远指向最后调用它的那个对象
+    //怎么改变this的指向？
+    // num1:使用 ES6 的箭头函数
+    // num2:在函数内部使用 _this = this
+    // num3:使用 apply、call、bind
+    // num4:new 实例化一个对象
+
+    //es6,this 始终指向函数定义时的 this，而非执行时
+    var name = "windowsName";
+    var a = {
+      name: "Cherry",
+      func1: function () {
+        console.log(this.name)
+      },
+      func2: function () {
+        setTimeout(() => {
+          this.func1()
+        }, 100);
+      }
+    };
+    a.func2()     // Cherry
+
+    //在函数内部使用 _this = this
+    var name = "windowsName";
+
+    var b = {
+      name: "Cherry",
+
+      func1: function () {
+        console.log(this.name)
+      },
+      func2: function () {
+        var _this = this;
+        setTimeout(function () {
+          _this.func1()
+        }, 100);
+      }
+    };
+    b.func2()       // Cherry
+
+    //使用 apply、call、bind
+    //num1:apply() 方法调用一个函数, 其具有一个指定的this值，以及作为一个数组（或类似数组的对象）提供的参数(如果这个函数处于非严格模式下，则指定为 null 或 undefined 时会自动指向全局对象)
+    //num2 其实 apply 和 call 基本类似，他们的区别只是传入的参数不同。call 方法接受的是若干个参数列表，而 apply 接收的是一个包含多个参数的数组。
+    //num3 bind()方法创建一个新的函数, 当被调用时，将其this关键字设置为提供的值，在调用新函数时，在任何提供之前提供一个给定的参数序列。
+
+    Function.prototype.newCall = function (context, ...parameter) {
+      if (typeof context === 'object') {
+        context = context || window
+      } else {
+        context = Object.create(null)
+      }
+      let fn = Symbol()
+      context[fn] = this
+      context[fn](...parameter);
+      delete context[fn]
+    }
+    let person = {
+      name: 'Abiel'
+    }
+    function sayHi(age, sex) {
+      console.log(this.name, age, sex);
+    }
+    sayHi.newCall(person, 25, '男'); // Abiel 25 男
+
+    Function.prototype.newApply = function (context, parameter) {
+      if (typeof context === 'object') {
+        context = context || window
+      } else {
+        context = Object.create(null)
+      }
+      let fn = Symbol()
+      context[fn] = this
+      context[fn](parameter);  // 应该加上扩展运算符
+      delete context[fn]
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>面试茅坑</title>
+</head>
+
+<body>
+  <script>
+    function() { }//报错
+    (function () { })//不报错
+    function f(x) { return x + 1 } ()//报错
+    function f(x) { return x + 1 } (1)//不报错，为什么返回 1
+    //第一行代码：因为JavaScript 将 function 关键字当作一个 函数声明语句 的开始，而函数声明语句 function 关键字后面应该是 函数名，这里后面跟圆括号，当然会报错。
+
+    //第二行代码：给它加上一对圆括号，解析器会把()里的当做表达式去解析，在这里就会当做匿名函数表达式解析，所以不会报错。
+
+    //第三行代码：在一条语句后面加上()会被当做分组操作符，分组操作符里必须要有表达式，所以这里报错；
+
+    //第四行代码：在一条函数声明语句后面加上(1) ，仅仅是相当于在声明语句之后又跟了一条毫无关系的表达式，等价于下面代码：function f(x){ return x + 1 }; (1)  //1
+  </script>
+  <script>
+    //表达式可以嵌套在别的表达式中，但语句不行。语句只能独立出现。
+  </script>
+</body>
+
+</html>
