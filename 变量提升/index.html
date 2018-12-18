@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>变量提升</title>
+</head>
+
+<body>
+  <h3>什么是块级作用域</h3>
+  <p>1、类似于 if、switch 条件选择或者 for、while 这样的循环体即是所谓的块级作用域；</p>
+  <p>2、在 ES5 中，要实现块级作用域，即需要在原来的函数作用域上包裹一层，即在需要限制变量提升的地方手动设置一个变量来替代原来的全局变量</p>
+  <script>
+    var callbacks5 = [];
+    for (var i = 0; i <= 2; i++) {
+      (function (i) {
+        // 这里的 i 仅归属于该函数作用域
+        callbacks5[i] = function () {
+          return i * 2;
+        };
+      })(i);
+    }
+    callbacks5[0]() === 0;
+    callbacks5[1]() === 2;
+    callbacks5[2]() === 4;
+
+    let callbacks6 = []
+    for (let i = 0; i <= 2; i++) {
+      // 这里的 i 属于当前块作用域
+      callbacks6[i] = function () {
+        return i * 2
+      }
+    }
+    callbacks6[0]() === 0
+    callbacks6[1]() === 2
+    callbacks6[2]() === 4
+  </script>
+  <h3>函数的生命周期与提升</h3>
+  <p>基础的函数提升同样会将声明提升至作用域头部，不过不同于变量提升，函数同样会将其函数体定义提升至头部</p>
+  <p>函数表达式遵循变量提升的规则，函数体并不会被提升至作用域头部</p>
+  <script></script>
+  <h3>es5中,是不允许在块级作用域中创建函数的;而ES6
+    中允许在块级作用域中创建函数,块级作用域中创建的函数同样会被提升至当前块级作用域头部与函数作用域头部,不同的是函数体并不会再被提升至函数作用域头部，而仅会被提升到块级作用域头部</h3>
+  <script>
+      (function () {
+        f; // undefined
+        //x; // Uncaught ReferenceError: x is not defined
+        console.log(c)
+        if (true) {
+          f();
+          let x;
+          var c;
+          function f() { console.log('I am function!'); }
+        }
+      }());
+  </script>
+  <h3>避免全局变量</h3>
+  <p>1、函数包裹</p>
+  <p>2、声明命名空间</p>
+  <p>3、模块化</p>
+</body>
+
+</html>
