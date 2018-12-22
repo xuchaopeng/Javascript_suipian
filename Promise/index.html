@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="http://mini.eastday.com/assets/js/jquery.min.js"></script>
   <title>Promise</title>
 </head>
 
@@ -138,7 +139,7 @@
       console.log('error', '5')
     })
   </script>
-  <h3>Promise API 参考 静态方法</h3>
+  <h3>6、Promise API 参考 静态方法</h3>
   <p>Promise.cast(promise);返回一个 Promise（当且仅当 promise.constructor == Promise）
     备注：目前仅有 Chrome 实现</p>
   <p>Promise.cast(obj);
@@ -185,6 +186,43 @@
 // expected output: "two"
   </script>
   <p>备注：我不大确定这个接口是否有用，我更倾向于一个 Promise.all 的对立方法，仅当所有数组元素全部给出否定的时候才抛出否定结果</p>
+  <h3>7、其它类库的实现</h3>
+  <div class="box" style="width:100px;height:100px;background: pink;"></div>
+  <script>
+    var options = {
+      url: '//mini.eastday.com/json/search/hotword-second.json',
+      type: 'GET',
+      dataType: 'jsonp',
+      jsonp: 'callback',
+      jsonpCallback: 'hotwords'
+    }
+    var success = function (res) {
+      console.log(res);
+    }
+    var hotwords = function (res) {
+      console.log(res, '7');
+    }
+    var fail = function (res) {
+      console.log(res, '7');
+    }
+    $('.box')
+      .animate({ 'opacity': 0 }, 1000)
+      .promise()
+      .then(function () {
+        console.log('done', '7');
+      });
+    // ajax  
+    $.ajax(options).then(success, fail);
+    $.ajax(options).done(success).fail(fail);
+
+    // ajax queue  
+    $.when($.ajax(options), $.ajax(options))
+      .then(function () {
+        console.log('all done.');
+      }, function () {
+        console.error('There something wrong.');
+      });
+  </script>
 </body>
 
 </html>
