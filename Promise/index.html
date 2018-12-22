@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Promise</title>
+</head>
+
+<body>
+  <h3>1、Promise初步</h3>
+  <script>
+    var getJson = function (i) {
+      return new Promise(function (resolve, reject) {
+        if (i === 0) {
+          setTimeout(reject, 500, 'error')
+        } else if (i === 1) {
+          setTimeout(resolve, 600, '1')
+        } else if (i === 2) {
+          setTimeout(resolve, 800, '2')
+        }
+      })
+    }
+    getJson(1).then(function (key) {
+      console.log(key);
+      return getJson(2)
+    }).then(function (key) {
+      console.log(key)
+      throw Error('This is a error!');
+      return '非类Promise对象'
+    }).then(function (key) {
+      console.log(key);
+      throw Error('This is a error!');
+    }).catch(function (key) {
+      // console.log(key);
+    })
+  </script>
+  <h3>2、Promise多情景的链式回调</h3>
+  <script>
+    var getAjax = function (i) {
+      return new Promise(function (resolve, reject) {
+        if (i === 0) {
+          setTimeout(reject, 500, 'error')
+        } else if (i === 1) {
+          setTimeout(resolve, 600, 'success1')
+        } else if (i === 2) {
+          setTimeout(resolve, 800, 'success2')
+        } else if (i === 500) {
+          setTimeout(reject, 1000, 'error500');
+        }
+      })
+    }
+    //成功、失败继续链式调用
+    getAjax(500).then(function (key) {
+      return key
+    }, function (key) {
+      return key
+    }).then(function (key) {
+      console.log(key);
+    })
+    //有一个失败将停止调用
+    getAjax(1).then(function (key) {
+      return getAjax(0)
+    }).then(function (key) {
+      console.log('过程成功')
+    }).catch(function (e) {
+      console.log('过程失败，停止链式调用')
+    }).then(function (key) {
+      console.log(key, 'hahhaha');
+      return getAjax(500);
+    }).catch(function (key) {
+      console.log('xixiix')
+    })
+  </script>
+  <p>当你从then(catch)的回调函数返回的时候，如果你返回一个值，它会传给下一个then的回调;当你返回一个'类'Promise的对象，则下一个then就会等待这个Promise明确结束（成功/失败）才会执行，参数就是Promise中resolve所传参</p>
+  <h3>3、多共一，即很多个地方需要依赖某一处的返回结果</h3>
+  <script>
+    var storyPromise;
+    var story = JSON.stringify({
+      num1: 'success10',
+      num2: 'success20',
+      num3: 'success30',
+      num4: 'success40',
+      num5: 'success50'
+    });
+    var getStory = function (story) {
+      return Promise.resolve(story).then(JSON.parse)
+    }
+    var getStoryItem = function (i) {
+      storyPromise = storyPromise || getStory(story);
+      return storyPromise.then(function (s) {
+        console.log(s, '3')
+        return s['num' + i]
+      })
+    }
+    getStoryItem(2).then(function (res) {
+      console.log(res, '3')
+    });
+    getStoryItem(3).then(function (res) {
+      console.log(res, '3')
+    });
+    getStoryItem(4).then(function (res) {
+      console.log(res, '3')
+    });
+  </script>
+  <p>
+    Promise 被否定之后会跳转到之后第一个配置了否定回调的 then（或 catch，一样的）。对于 then(func1, func2) 来说，必会调用 func1 或 func2 之一，但绝不会两个都调用。而
+    then(func1).catch(func2) 这样，如果 func1 返回否定的话 func2 也会被调用，因为他们是链式调用中独立的两个步骤。
+  </p>
+  <h3>4、Promise异常或成功手动触发</h3>
+  <p> Promise.reject()/ Promise.resolve()</p>
+  <h3>5、1完成2，2完成3，3完成4...</h3>
+  <script>
+    var resData = {
+      urlArray: [
+        'curl?1',
+        'curl?2',
+        'curl?3',
+        'curl?4',
+        'curl?5'
+      ]
+    }
+    var xcp = function (res) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(resolve, 500, res);
+      })
+    }
+    xcp(resData).then(function (res) {
+      return res.urlArray.reduce(function (prev, next) {
+        return prev.then(function () {
+          return xcp(next)
+        })
+      }, Promise.resolve());
+    }).then(function () {
+      console.log('all done', '5')
+    }).catch(function (err) {
+      console.log('error', '5')
+    })
+  </script>
+  <h3>Promise API 参考 静态方法</h3>
+  <p>Promise.cast(promise);返回一个 Promise（当且仅当 promise.constructor == Promise）
+    备注：目前仅有 Chrome 实现</p>
+  <p>Promise.cast(obj);
+    创建一个以 obj 为成功结果的 Promise。
+    备注：目前仅有 Chrome 实现</p>
+  <p>Promise.resolve(thenable);
+    从 thenable 对象创建一个新的 Promise。一个 thenable（类 Promise）对象是一个带有“then”方法的对象。如果你传入一个原生的 JavaScript Promise 对象，则会创建一个新的
+    Promise。此方法涵盖了 Promise.cast 的特性，但是不如 Promise.cast 更简单高效。</p>
+  <p>Promise.reject(obj);
+    创建一个以 obj 为否定结果的 Promise。为了一致性和调试便利（如堆栈追踪），obj 应该是一个 Error 实例对象。</p>
+  <p>Promise.all(array);
+    Promise.all(iterable) 方法返回一个 Promise 实例，此实例在 iterable 参数内所有的 promise 都“完成（resolved）”或参数中不包含 promise
+    时回调完成（resolve）；如果参数中 promise 有一个失败（rejected），此实例回调失败（reject），失败原因的是第一个失败 promise 的结果。
+    Promise 对象或者其他对象。确认结果是一个数组，包含传入数组中每个 Promise 的确认结果（且保持顺序）；否定结果是传入数组中第一个遇到的否定结果。
+    备注：目前仅有 Chrome 实现</p>
+  <script>
+    var promise1 = Promise.resolve(3);
+    var promise2 = 42;
+    var promise3 = new Promise(function (resolve, reject) {
+
+      setTimeout(reject, 100, 'foo');
+    });
+
+    Promise.all([promise1, promise2, promise3]).then(function (values) {
+      console.log(values);
+    }).catch(function (values) { console.log(values) })
+    //foo
+  </script>
+  <p>Promise.race(array);
+    方法返回一个 promise，一旦迭代器中的某个promise解决或拒绝，返回的 promise就会解决或拒绝。</p>
+  <script>
+    var promise1 = new Promise(function (resolve, reject) {
+      setTimeout(resolve, 500, 'one');
+    });
+
+    var promise2 = new Promise(function (resolve, reject) {
+      setTimeout(resolve, 100, 'two');
+    });
+
+    Promise.race([promise1, promise2]).then(function (value) {
+      console.log(value);
+      // Both resolve, but promise2 is faster
+    });
+// expected output: "two"
+  </script>
+  <p>备注：我不大确定这个接口是否有用，我更倾向于一个 Promise.all 的对立方法，仅当所有数组元素全部给出否定的时候才抛出否定结果</p>
+</body>
+
+</html>
