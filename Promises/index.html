@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Promises</title>
+  </head>
+  <body>
+    <script>
+      //注意：如果想要在回调中获取上个 Promise 中的结果，上个 Promise 中必须要返回结果。(使用 () => x 比() => { return x; } 更简洁一点)
+      new Promise((resolve, reject) => {
+        console.log('Initial');
+
+        resolve();
+      })
+        .then(() => {
+          throw new Error('Something failed');
+
+          console.log('Do this');
+        })
+        .catch(() => {
+          console.log('Do that');
+        })
+        .then(() => {
+          console.log('Do this whatever happened before');
+        });
+      //基本上，一个 Promise 链式遇到异常就会停止，查看链式的底端，寻找catch处理程序来代替当前执行。在同步的代码执行之后，这是非常模型化的。
+      new Promise((resolve, reject) => {
+        console.log('Initial');
+        reject();
+      })
+        .then(() => {
+          throw new Error('Something failed');
+
+          console.log('Do this');
+        })
+        .then(() => {
+          console.log('Do this whatever happened before');
+        })
+        .catch(() => {
+          console.log('Do that');
+        });
+      //Initial
+      //Do that
+    </script>
+    <h3>优雅的调用方式</h3>
+    <script>
+      function func1() {
+        console.log('func1');
+      }
+      function func2() {
+        console.log('func2');
+      }
+
+      var arry = [func1, func2];
+      arry.reduce(function(prev, next) {
+        return prev.then(next);
+      }, Promise.resolve());
+      //等价于  Promise.resolve().then(func1).then(func2);
+    </script>
+    <h3>Promise.race()</h3>
+    <script>
+      //Promise.race(iterable) 方法返回一个 promise，一旦迭代器中的某个promise解决或拒绝，返回的 promise就会解决或拒绝。
+      var promise1 = new Promise(function(resolve, reject) {
+        setTimeout(resolve, 500, 'one');
+      });
+      var pormise2 = new Promise(function(resolve, reject) {
+        setTimeout(resolve, 100, 'two');
+      });
+      Promise.race([promise1, promise2]).then(function(value) {
+        console.log(value);
+      });
+      //two
+    </script>
+    <h3>Promise.all(iterable)</h3>
+    <p>
+      Promise.all(iterable) 方法返回一个 Promise 实例，此实例在 iterable 参数内所有的 promise
+      都“完成（resolved）”或参数中不包含 promise 时回调完成（resolve）；如果参数中 promise
+      有一个失败（rejected），此实例回调失败（reject），失败原因的是第一个失败 promise 的结果。
+    </p>
+    <script>
+      var promisenum1 = Promise.resolve(3);
+      var promisenum2 = 42;
+      var promisenum3 = new Promise(function(resolve, reject) {
+        setTimeout(resolve, 100, 'foo');
+      });
+      var promisenum4 = Promise.reject('error');
+      Promise.all([promisenum1, promisenum2, promisenum3, promisenum4])
+        .then(function(values) {
+          console.log(values);
+        })
+        .catch(res => {
+          console.log(res);
+        });
+      //error
+    </script>
+    <h3>时序</h3>
+    <script>
+      Promise.resolve().then(() => console.log(2));
+      console.log(1); // 1, 2
+    </script>
+  </body>
+</html>
