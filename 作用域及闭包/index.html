@@ -1,46 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script type="text/javascript" src="//mini.eastday.com/assets/js/jquery.min.js"></script>
+    <title>作用域及闭包</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script type="text/javascript" src="//mini.eastday.com/assets/js/jquery.min.js"></script>
-  <title>作用域及闭包</title>
-</head>
-
-<body>
-  <h3>闭包</h3>
-  <p>闭包是由函数以及创建该函数的词法环境组合而成。这个环境包含了这个闭包创建时所能访问的所有局部变量。</p>
-  <div class="red" style="width:200px;height:200px;background:red;"></div>
-  <script>
-    $(function () {
-      $(".red").click((function (a, b, c) {
-        return function () {
-          console.log(a++, b++, c++);
+  <body>
+    <h3>闭包</h3>
+    <p>闭包是由函数以及创建该函数的词法环境组合而成。这个环境包含了这个闭包创建时所能访问的所有局部变量。</p>
+    <p>闭包是什么?</p>
+    <p>闭包是嵌套的内部函数,包含被引用的变量的对象，存在于嵌套的内部函数中</p>
+    <p>闭包产生的条件?</p>
+    <p>函数嵌套，内部函数引用了外部函数的数据(变量/函数)</p>
+    <h3>常见闭包</h3>
+    <p>1、将函数作为另一个函数的返回值</p>
+    <p>2、将函数作为实参传递给另一个函数调用</p>
+    <script></script>
+    <h3>闭包的作用</h3>
+    <h3>闭包的生命周期</h3>
+    <p>在嵌套内部函数定义执行完成就产生了,死亡在嵌套内部函数产生垃圾对象时</p>
+    <h3>闭包引用 自定义模块</h3>
+    <script>
+      var module = (function() {
+        function a() {
+          console.log('a');
         }
-      })(1, 2, 3));
-    });
-  </script>
-  <h3>es6解构</h3>
-  <script>
-    var person = {
-      name: '小明',
-      age: 20,
-      gender: 'male',
-      passport: 'G-12345678',
-      school: 'No.4 middle school',
-      address: {
-        city: 'Beijing',
-        street: 'No.1 Road',
-        zipcode: '100001'
+        function b() {
+          console.log('b');
+        }
+        return {
+          a: a,
+          b: b
+        };
+      })();
+    </script>
+    <h3>闭包之内存溢出与内存泄露</h3>
+    <p>函数执行后，函数内部的局部变量没有释放,占用内存时间会变长;能不用就不用，及时释放;</p>
+    <script>
+      function fn1() {
+        var arr = new Array(1000);
+        return function() {
+          console.log(arr.length);
+        };
       }
-    };
-    var { name, address: { city, zip } } = person;
+      var f = fn1();
+      f();
+      f = null; //让函数成为垃圾对象 内存释放
 
-    let [x, [y, z]] = ['hello', ['JavaScript', 'ES6']];
-    //https://github.com/mqyqingfeng/Blog 预计写四个系列：JavaScript深入系列、JavaScript专题系列、ES6系列、React系列。
-  </script>
-</body>
+      //1、内存溢出
+      //*程序运行需要的内存超过了剩余的内存，就内存溢出的错误
+      // var obj = {};
+      // for (var i = 0; i < 10000; i++) {
+      //   obj[i] = new Array(10000000);
+      // }
+      //2、内存泄露
+      //*占用的内存没有及时释放
+      //*内存泄露积累多了就容易导致内存溢出
+      //3、常见的内存泄露
+      //意外的全局变量
+      function fn2() {
+        a = new Array(100);
+        console.log(a);
+      }
+      fn();
+      //没有及时清理的计数器或回调函数
+      // var timer = setInterval(function() {
+      //   console.log('定时器');
+      //   clearInterval(timer);
+      // }, 100);
+      //闭包
+      // function fn1() {
+      //   var arr = new Array(1000);
+      //   return function() {
+      //     console.log(arr.length);
+      //   };
+      // }
+      // var f = fn1();
+      // f();
+    </script>
+    <div class="red" style="width:200px;height:200px;background:red;"></div>
+    <script>
+      $(function() {
+        $('.red').click(
+          (function(a, b, c) {
+            return function() {
+              console.log(a++, b++, c++);
+            };
+          })(1, 2, 3)
+        );
+      });
+    </script>
+    <h3>es6解构</h3>
+    <script>
+      var person = {
+        name: '小明',
+        age: 20,
+        gender: 'male',
+        passport: 'G-12345678',
+        school: 'No.4 middle school',
+        address: {
+          city: 'Beijing',
+          street: 'No.1 Road',
+          zipcode: '100001'
+        }
+      };
+      var {
+        name,
+        address: { city, zip }
+      } = person;
 
+      let [x, [y, z]] = ['hello', ['JavaScript', 'ES6']];
+      //https://github.com/mqyqingfeng/Blog 预计写四个系列：JavaScript深入系列、JavaScript专题系列、ES6系列、React系列。
+    </script>
+  </body>
 </html>
