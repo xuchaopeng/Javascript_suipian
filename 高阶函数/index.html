@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>高阶函数</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>高阶函数</title>
-</head>
-
-<body>
-  <script>
-    var arr = [1, 2, 3, 4, 5];
-    var xcp = [{ c: 1, a: 2 }, { c: 3, a: 4 }];
-    //forEach让数组中的每一项做一件事
-    xcp.forEach(function (item, index) {
-      // console.log(item);
-      item.c = 1000;
-    })
-    console.log(xcp);
-    console.log(arr, 'forEach');
-    //map让数组通过某种计算产生新的数组 不改变原组数
-    var arr1 = xcp.map(function (item, index) {
-      return item.c * 2;
-    })
-    console.log(arr1, 'map');
-    //filter 帅选出数组中符合条件的选项,不改变原组数
-    var arr2 = arr.filter(function (item, index) {
-      return item >= 2;
-    })
-    console.log(arr2, 'filter');
-    //reduce 让数组的前后项做某种计算，并累计最终值 函数被计算arr.length - 1次
-    var arr3 = arr.reduce(function (prev, next, index, arr) {
-      console.log(prev)
-      return prev + next;
-    })
-    console.log(arr3, 'reduce');
-    //every 检测数组中的每一项是否符合条件
-    var arr4 = arr.every(function (item, index) {
-      return item > 0
-    })
-    console.log(arr4, 'every');
-    //some j检测数组中的某一项是否符合条件
-    var arr5 = arr.every(function (item, index) {
-      return item > 5
-    })
-    console.log(arr5, 'some');
-  </script>
-  <h3>curring函数</h3>
-  <script>
-    /**
-    * 功能函数
-    */
-    function currying() {
-      var f = arguments[0];
-      var args = Array.prototype.slice.call(arguments, 1);
-      return function () {
-        args.push.apply(args, arguments);
-        return f.apply(this, args);
+  <body>
+    <script>
+      var arr = [1, 2, 3, 4, 5];
+      var xcp = [{ c: 1, a: 2 }, { c: 3, a: 4 }];
+      //forEach让数组中的每一项做一件事
+      xcp.forEach(function(item, index) {
+        // console.log(item);
+        item.c = 1000;
+      });
+      console.log(xcp);
+      console.log(arr, 'forEach');
+      //map让数组通过某种计算产生新的数组 不改变原组数
+      var arr1 = xcp.map(function(item, index) {
+        return item.c * 2;
+      });
+      console.log(arr1, 'map');
+      //filter 帅选出数组中符合条件的选项,不改变原组数
+      var arr2 = arr.filter(function(item, index) {
+        return item >= 2;
+      });
+      console.log(arr2, 'filter');
+      //reduce 让数组的前后项做某种计算，并累计最终值 函数被计算arr.length - 1次
+      var arr3 = arr.reduce(function(prev, next, index, arr) {
+        console.log(prev);
+        return prev + next;
+      });
+      console.log(arr3, 'reduce');
+      //every 检测数组中的每一项是否符合条件
+      var arr4 = arr.every(function(item, index) {
+        return item > 0;
+      });
+      console.log(arr4, 'every');
+      //some j检测数组中的某一项是否符合条件
+      var arr5 = arr.some(function(item, index) {
+        return item > 5;
+      });
+      console.log(arr5, 'some');
+    </script>
+    <h3>curring函数</h3>
+    <script>
+      /**
+       * 功能函数
+       */
+      function currying() {
+        var f = arguments[0];
+        var args = Array.prototype.slice.call(arguments, 1);
+        return function() {
+          args.push.apply(args, arguments);
+          return f.apply(this, args);
+        };
       }
-    }
-    var xcp = currying(function () { console.log('hanshu', arguments) }, 10);
-    xcp(1, 2)
-    //[10,1,2]
-  </script>
-</body>
-
+      var xcp = currying(function() {
+        console.log('hanshu', arguments);
+      }, 10);
+      xcp(1, 2);
+      //[10,1,2]
+    </script>
+  </body>
 </html>
