@@ -112,7 +112,7 @@ Opera 11+ Firefox 3.6+ Safari 5+ Chrome 8+ Internet Explorer 9+
 
 > ### 调用堆栈
 
-###概念
+#### 概念
 
 - **调用栈** ： 这是代码执行的地方。例如：运行一个函数,它会将其放到栈顶，当返回时，就会将这个函数从栈顶弹出。
   ```
@@ -136,11 +136,11 @@ Opera 11+ Firefox 3.6+ Safari 5+ Chrome 8+ Internet Explorer 9+
   //在创建阶段，引擎检查代码找出变量和函数声明，但是变量最初设置为undefined(var 的情况下)，但let cosnt并未初始化值(直到引擎在代码中找到实际声明位置找到let const变量的值,它才会赋值或undefined)。
   ```
 
-### runtime
+#### runtime
 
 ![javascript运行](https://static.oschina.net/uploads/space/2017/1213/104047_yNc9_2896879.png)
 
-### javascript 事件循环
+#### javascript 事件循环
 
 概念：
 
