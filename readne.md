@@ -106,10 +106,110 @@ function fn2() {
 7、indexOf
 8、lastIndexOf
 9、reduceRight
-浏览器支持
-Opera 11+
-Firefox 3.6+
-Safari 5+
-Chrome 8+
-Internet Explorer 9+
-//https://www.zhangxinxu.com/study/201304/es5-array.js
+**浏览器支持**
+Opera 11+ Firefox 3.6+ Safari 5+ Chrome 8+ Internet Explorer 9+
+[兼容 ie6-8](https://www.zhangxinxu.com/study/201304/es5-array.js)
+
+> ### 调用堆栈
+
+###概念
+
+- **调用栈** ： 这是代码执行的地方。例如：运行一个函数,它会将其放到栈顶，当返回时，就会将这个函数从栈顶弹出。
+  ```
+    function multiply(x, y) {
+      return x * y;
+    }
+    function printSquare(x) {
+      var s = multiply(x, x);
+      console.log(s);
+    }
+    printSquare(5);
+  ```
+  ![调用栈](https://user-gold-cdn.xitu.io/2017/11/11/bc37a6231fca3b0aa3cd36369e866837?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+- **内存堆** ：这是内存分配发生的地方
+  ![内存堆](https://user-gold-cdn.xitu.io/2017/11/11/5d0653fff3ec904dbe210161f3ec9196?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+  **待定---执行上下文-创建阶段/执行阶段**
+  **待定---词法环境/变量环境**
+  ```
+  var a = a;
+  const b = b;
+  //在创建阶段，引擎检查代码找出变量和函数声明，但是变量最初设置为undefined(var 的情况下)，但let cosnt并未初始化值(直到引擎在代码中找到实际声明位置找到let const变量的值,它才会赋值或undefined)。
+  ```
+
+### runtime
+
+![javascript运行](https://static.oschina.net/uploads/space/2017/1213/104047_yNc9_2896879.png)
+
+### javascript 事件循环
+
+概念：
+
+**macro-task(宏任务):** 包括整体代码 script，setTimeout，setInterval
+**micro-task(微任务):** Promise，process.nextTick
+
+```
+setTimeout(function() {
+    console.log('setTimeout');
+})
+
+new Promise(function(resolve) {
+    console.log('promise');
+}).then(function() {
+    console.log('then');
+})
+console.log('console');
+```
+
+- 这段代码作为宏任务，进入主线程。
+- 先遇到 setTimeout，那么将其回调函数注册后分发到宏任务 Event Queue。(注册过程与上同，下文不再描述)
+- 接下来遇到了 Promise，new Promise 立即执行，then 函数分发到微任务 Event Queue。
+- 遇到 console.log()，立即执行。
+- 整体代码 script 作为第一个宏任务执行结束，看看有哪些微任务？我们发现了 then 在微任务 Event Queue 里面，执行。
+- 第一轮事件循环结束了，我们开始第二轮循环，当然要从宏任务 Event Queue 开始。我们发现了宏任务 Event Queue 中 setTimeout 对应的回调函数，立即执行。
+
+**关系图**
+![事件循环关系图](https://user-gold-cdn.xitu.io/2017/11/21/15fdcea13361a1ec?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+**代码分析**
+
+```
+console.log('1');
+
+setTimeout(function() {
+    console.log('2');
+    process.nextTick(function() {
+        console.log('3');
+    })
+    new Promise(function(resolve) {
+        console.log('4');
+        resolve();
+    }).then(function() {
+        console.log('5')
+    })
+})
+
+new Promise(function(resolve) {
+    console.log('7');
+    resolve();
+}).then(function() {
+    console.log('8')
+})
+
+setTimeout(function() {
+    console.log('9');
+    process.nextTick(function() {
+        console.log('10');
+    })
+    new Promise(function(resolve) {
+        console.log('11');
+        resolve();
+    }).then(function() {
+        console.log('12')
+    })
+})
+```
+
+**小结：**
+
+- 事件循环是 js 实现异步的一种方法，也是 js 的执行机制
+- javascript 是一门单线程语言
