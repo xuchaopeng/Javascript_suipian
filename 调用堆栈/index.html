@@ -30,5 +30,115 @@
       var p = new Worker('work.js');
       console.log(p);
     </script>
+
+    <p>以下代码的输出顺序？</p>
+    <script>
+      var needTime;
+      console.time(needTime);
+
+      setTimeout(function() {
+        console.timeEnd(needTime);
+        console.log(1);
+      }, 1000);
+
+      console.log(2);
+
+      setTimeout(function() {
+        console.log(3);
+      });
+
+      new Promise(function(resolve) {
+        console.log(4);
+        reslove();
+      }).then(function() {
+        console.log(5);
+      });
+
+      setTimeout(function() {
+        console.log(6);
+      });
+
+      function fo(num) {
+        return num <= 2 ? 1 : fo(num - 1) + fo(num - 2);
+      }
+    </script>
+    <p>需要知道的几个概念</p>
+    <div>
+      1、内存堆; 2、调用栈; 3、同步任务、异步任务; 4、宏任务、微任务; 5、Event Queue(事件队列)、Event Table(事件列表);
+      5、Javascript执行机制: 先宏观任务,后微观任务
+    </div>
+    <p>Event Loop(事件循环)</p>
+    <div>
+      1、主线程、分线程(H5 引入的新概念 worker); 2、导图;
+      <div>
+        o:同步、异步任务分别进入不同的场所，同步进入主线程，异步进入Event Table并注册回调函数; o:指定事情完成时，Event
+        Table将函数移入Event Queue。 o:主线程内任务执行完毕为空，会从Event Queue读取对应的函数，进入主线程执行。
+        o:已上过程的不断重复，就是常说的Evnet Loop（事件循环）。
+      </div>
+      <p>
+        "已上过程不断的重复"。js引擎存在monitoring
+        process进程，会持续不断的检查主线程执行栈是否为空，一旦为空，就会去Event Queue那里检查是否有等待被调用的函数
+      </p>
+      <script>
+        //分析一下代码
+        console.log('代码执行开始');
+        setTimeout(function() {
+          console.log('发送成功');
+        }, 1000);
+        console.log('代码执行结束');
+        //这样，我们就可以理解为啥 1s不一定是真的1s后执行
+      </script>
+    </div>
+    <p>setTimeout、setInterval</p>
+    <div>
+      <script>
+        var time1;
+        console.time(time1);
+
+        setTimeout(function() {
+          console.log('setTimeout');
+          console.timeEnd(time1);
+        }, 1000);
+
+        function fn1() {
+          console.log('setInterval');
+        }
+        setInterval(fn1, 1000);
+        //一旦setInterval的回调函数fn执行时间超过了延迟时间ms，那么就完全看不出来有时间间隔了。
+      </script>
+    </div>
+    <p>Promise</p>
+    <div>
+      1、宏任务：包括整体代码script，setTimeout，setInterval； 2、微任务：Promise，process.nextTick；
+      不同类型的任务会进入对应的Event Queue，比如setTimeout和setInterval会进入相同的Event
+      Queue。事件循环的顺序，决定js代码的执行顺序。进入整体代码(宏任务)后，开始第一次循环。接着执行所有的微任务。然后再次从宏任务开始，找到其中一个任务队列执行完毕，再执行所有的微任务。
+      <script>
+        setTimeout(function() {
+          console.log('setTimeout');
+        });
+
+        new Promise(function(resolve) {
+          console.log('promise');
+        }).then(function() {
+          console.log('then');
+        });
+        console.log('console');
+      </script>
+      <div>
+        1、这段代码作为宏任务，进入主线程。 先遇到setTimeout，那么将其回调函数注册后分发到宏任务Event
+        Queue。(注册过程与上同，下文不再描述) 2、接下来遇到了Promise，new Promise立即执行，then函数分发到微任务Event
+        Queue。 3、遇到console.log()，立即执行。
+        4、好啦，整体代码script作为第一个宏任务执行结束，看看有哪些微任务？我们发现了then在微任务Event Queue里面，执行。
+        5、ok，第一轮事件循环结束了，我们开始第二轮循环，当然要从宏任务Event Queue开始。我们发现了宏任务Event
+        Queue中setTimeout对应的回调函数，立即执行。
+      </div>
+      <p>思维导图</p>
+      <div>注意这里的导图加上 列表式的 明确表明处理宏任务及微任务</div>
+    </div>
+    <p>小结</p>
+    <div>
+      1、javascript是一门单线程语言,不管是什么新框架新语法糖实现的所谓异步，其实都是用同步的方法去模拟的; 2、Event
+      Loop是javascript的执行机制;
+    </div>
   </body>
 </html>
