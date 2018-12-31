@@ -18,7 +18,7 @@ setTimeout(function() {
 
 new Promise(function(resolve) {
   console.log(4);
-  reslove();
+  resolve();
 }).then(function() {
   console.log(5);
 });
