@@ -9,6 +9,16 @@
 
   <body>
     <script>
+      const arr1 = [1, 2, 3];
+      const arr2 = [];
+      for (let i = 0; i < arr1.length; i++) {
+        arr2.push(arr1[i] * 2);
+      }
+      console.log(arr2); // [2,4,6]
+
+      arr1.forEach(item => item * 2);
+    </script>
+    <script>
       var arr = [1, 2, 3, 4, 5];
       var xcp = [{ c: 1, a: 2 }, { c: 3, a: 4 }];
       //forEach让数组中的每一项做一件事
