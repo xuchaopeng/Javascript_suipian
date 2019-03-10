@@ -1,0 +1,11 @@
+.hidden-numBtn(@n , @i : 5) when (@i <= @n){
+  li:nth-child(@{i}){
+    display: none;
+  }
+  .hidden-numBtn(@n , (@i + 1));
+}
+.xcp {
+  width:100px;
+  height:100px;
+  background:pink;
+}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <p>类式继承</p>
+  <script>
+    (function () {
+      return;
+      function SuperClass() {
+        // this.superValue = true;
+      }
+      SuperClass.prototype.getSuperValue = function () {
+        return this.superValue;
+      }
+      SuperClass.prototype.superValue = 'cccc'
+
+      function SubClass() {
+        this.subValue = false;
+        // this.superValue = 'haha';
+      }
+      SubClass.prototype = new SuperClass();
+
+      var instance1 = new SubClass(10);
+      console.log(instance1.superValue)
+    })()
+  </script>
+  <p>构造函数式继承</p>
+  <script>
+      (function () {
+        return;
+        function SuperClass(id) {
+          this.id = id;
+          this.books = ['html', 'css', 'Javascript']
+        }
+        SuperClass.prototype.showBooks = function () {
+          console.log(this.books)
+        }
+
+        function SubClass(id) {
+          SuperClass.call(this, id);
+        }
+
+
+        var instance1 = new SubClass(10);
+        instance1.books.push('设计模式');
+        console.log(instance1.books);//['html', 'css', 'Javascript','设计模式']
+        console.log(instance1.id); //10
+
+        var instance2 = new SubClass(11);
+        console.log(instance2.books);//['html', 'css', 'Javascript']
+        console.log(instance2.id); //11
+        instance2.showBooks();  //undefined
+      })()
+  </script>
+  <p>组合式继承</p>
+  <script>
+      (function () {
+        return;
+        function SuperClass(name) {
+          this.name = name;
+          this.books = ['html', 'css', 'Javascript']
+        }
+        SuperClass.prototype.getName = function () {
+          console.log(this.name)
+        }
+        SuperClass.prototype.xcp = [1]
+
+        function SubClass(name, time) {
+          SuperClass.call(this, name);
+          this.time = time;
+        }
+        SubClass.prototype = new SuperClass();
+        SubClass.prototype.getTime = function () {
+          console.log(this.time);
+        };
+
+        var instance1 = new SubClass('js book', 2014);
+        instance1.books.push('设计模式');
+        console.log(instance1.books);
+        instance1.getName();
+        instance1.getTime();
+        var instance2 = new SubClass('css book', 2013);
+        console.log(instance2.books);
+        instance2.getName();
+        instance2.getTime();
+      })();
+  </script>
+  <p>原型式继承:原型式继承跟类式继承一样，父类对象book中的值类型的属性被复制，引用类型的属性被共有</p>
+  <script>
+    (function () {
+      return;
+      function inheritObject(o) {
+        function F() { }
+        F.prototype = o
+        return new F()
+      }
+
+      var book = {
+        name: 'js book',
+        likebooks: ['css', 'js', 'html']
+      }
+      var newBook = inheritObject(book);
+      newBook.name = 'ajax book';
+      newBook.likeBook.push('as book');
+
+      var otherBook = inheritObject(book);
+      otherBook.name = 'flash book';
+      otherBook.likeBook.push('as book');
+    })()
+  </script>
+  <p>寄生式继承</p>
+  <div>
+    通过在一个函数内的过渡对象实现继承并返回新对象的方式，称之为寄生式继承。
+    寄生就像寄生虫一样寄托于某个对象内部生长。就是对原型继承的第二次封装，并且在这第二次封装过程中对继承的对象进行了扩展，这样新创建的对象不仅仅有父类中的属性和方法而且还添加了新的属性和方法。
+  </div>
+  <script>
+      (function () {
+        function inheritObject(o) {
+          function F() { }
+          F.prototype = o
+          return new F()
+        }
+        var book = {
+          name: 'js book',
+          likebooks: ['css', 'js', 'html']
+        }
+        function createBook(obj) {
+          var o = new inheritObject(obj);
+          o.getName = function () {
+            console.log(name)
+          }
+          //返回扩展后的新对象
+          return o;
+        }
+      })()
+  </script>
+  <p>寄生组合式继承</p>
+  <div>
+    寄生组合式继承就是寄生式继承+构造函数式继承
+  </div>
+  <script>
+      (function () {
+        function inheritObject(o) {
+          function F() { }
+          F.prototype = o
+          return new F()
+        }
+
+        function inheritPrototype(subClass, superClass) {
+          //赋值一份父类的原型副本保存在变量中
+          var p = inheritObject(superClass.prototype);
+          //修正因为重写子类原型导致子类的constructor属性被修改
+          p.constructor = subClass;
+          //设置子类的原型
+          subClass.prototype = p;
+        }
+
+        //定义父类
+        function SuperClass(name) {
+          this.name = name;
+          this.colors = ['red', 'bule', 'green'];
+        }
+        //定义父类原型方法
+        SuperClass.prototype.getName = function () {
+          console.log(this.name)
+        }
+
+        //定义子类
+        function SubClass(name, time) {
+          //构造函数继承
+          SuperClass.call(this, name);
+          //子类新属性
+          this.name = time;
+        }
+        //寄生式继承父类原型
+        inheritPrototype(SubClass, SuperClass);
+        //子类新增原型的方法
+        SubClass.prototype.getTime = function () {
+          console.log(this.time)
+        }
+
+        //创建两个测试方法
+        var instance1 = new SubClass('js book', 2014);
+        var instance2 = new SubClass('css book', 2013);
+      })()
+  </script>
+</body>
+
+</html>
