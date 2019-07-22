@@ -119,11 +119,19 @@ setTimeout(function () {
   console.log('setTimeout');
 });
 
-new Promise(function (resolve) {
+<!-- new Promise(function (resolve) {
   console.log('promise');
 }).then(function () {
   console.log('then');
-});
+}); -->
+
+new Promise(function(resolve){
+  setTimeout(function(){
+    resolve();
+  })
+}).then(function(){
+  console.log('then');
+})
 
 console.log('console');
 ```

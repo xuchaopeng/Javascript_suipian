@@ -8,6 +8,7 @@ var gulp = require('gulp'),
   htmlmin = require('gulp-htmlmin'),
   rename = require('gulp-rename'),
   sass = require('gulp-sass'),
+  less = require('gulp-less'),
   concat = require('gulp-concat'),
   babel = require('gulp-babel');
 
@@ -29,10 +30,19 @@ gulp.task('css', function() {
     .pipe(gulp.dest(distPath));
 });
 
+gulp.task('less', function() {
+  gulp
+    .src([srcPath + '/**/*.less'])
+    .pipe(less())
+    .pipe(cleanCSS({ compatibility: 'ie8' }))
+    .pipe(gulp.test(distPath));
+});
+console.log(less,'xcp')
+
 gulp.task('listen', function() {
   livereload.listen();
   gulp.watch(srcPath + '/**/*.css', ['css']);
   gulp.watch(srcPath + '/**/*.js', ['Js']);
 });
 
-gulp.task('dev', ['Js', 'css', 'listen']);
+gulp.task('dev', ['Js', 'css', 'listen', 'less']);

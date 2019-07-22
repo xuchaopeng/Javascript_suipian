@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+  <!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 -->
+  <link rel="canonical" href="https://www.example.com/your/path.html">
+  <title>Hello World</title>
+  <style mip-custom>
+    h2 {
+      color: red;
+    }
+
+    [data-clicked=true] {
+      background: pink;
+    }
+
+    #content,
+    .filter {
+      text-align: center;
+      padding-top: 10px;
+    }
+
+    #content span,
+    #content mip-img,
+    #content mip-video {
+      display: none;
+    }
+
+    .first span,
+    .second mip-img,
+    .third mip-video {
+      display: block !important;
+    }
+  </style>
+</head>
+
+<body>
+  <mip-data>
+    <script type="application/json">
+            {
+              "clickedClass": "second"
+            }
+          </script>
+  </mip-data>
+  <mip-vd-tabs>
+    <section>
+      <li>第一页</li>
+      <li>第二页</li>
+      <li>第三页</li>
+    </section>
+    <div class="filter">
+      <span on="tap:MIP.setData({clickedClass:'first'})">文字</span>
+      <span on="tap:MIP.setData({clickedClass:'second'})">图片</span>
+      <span on="tap:MIP.setData({clickedClass:'third'})">视频</span>
+    </div>
+  </mip-vd-tabs>
+  <div id="content" m-bind:class="clickedClass">
+    <span>我是文案啦！</span>
+    <mip-img layout="responsive" width="350" height="263"
+      src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1552205990&di=444c4f69a8f5e86039c263b88d0ba1e9&src=http://img0.ph.126.net/wJgyWg3kvSx4Q89diEntBQ==/2841208414935199566.jpg">
+    </mip-img>
+    <mip-video poster="https://www.mipengine.org/static/img/sample_04.jpg" controls layout="responsive" width="640"
+      height="360"
+      src="https://gss0.bdstatic.com/-b1Caiqa0d9Bmcmop9aC2jh9h2w8e4_h7sED0YQ_t9iCPK/mda-gjkt21pkrsd8ae5y/mda-gjkt21pkrsd8ae5y.mp4">
+    </mip-video>
+  </div>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-tabs/mip-tabs.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-script/mip-script.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-vd-tabs/mip-vd-tabs.js"></script>
+</body>
+
+</html>
