@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CSS30</title>
+  <style>
+    body {
+      counter-reset: section;
+    }
+
+    h1 {
+      counter-reset: subsection;
+    }
+
+    h1:before {
+      counter-increment: section;
+      content: "Section "counter(section) ". ";
+    }
+
+    h2:before {
+      counter-increment: subsection;
+      content: counter(section) "."counter(subsection) " ";
+    }
+
+    .custom-variables {
+      --some-color: #da7800;
+      --some-keyword: italic;
+      --some-size: 1.25em;
+      --some-complex-value: 1px 1px 2px whitesmoke, 0 0 1em slategray, 0 0 0.2em slategray;
+      color: var(--some-color);
+      font-size: var(--some-size);
+      font-style: var(--some-keyword);
+      text-shadow: var(--some-complex-value);
+    }
+
+    .unselectable {
+      user-select: none;
+    }
+
+    .container {
+      border: 1px solid #333;
+      height: 250px;
+      width: 250px;
+    }
+
+    .center {
+      display: table;
+      height: 100%;
+      width: 100%;
+    }
+
+    .center>span {
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    @keyframes donut-spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .donut {
+      display: inline-block;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #7983ff;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: donut-spin 1.2s linear infinite;
+    }
+
+    .etched-text {
+      text-shadow: 0 2px white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #b8bec5;
+    }
+
+
+    .evenly-distributed-children {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .flexbox-centering {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1></h1>
+  <div>
+    <p class="custom-variables">自定义变量</p>
+    <p class="unselectable">
+      您不能选中我<span class="donut"></span>
+    </p>
+    <div class="container">
+      <div class="center"><span>Centered content</span><span>Centered content</span><span>Centered content</span></div>
+    </div>
+  </div>
+  <h1></h1>
+  <p class="etched-text">I appear etched into the background.</p>
+  <div class="evenly-distributed-children">
+    <p>Item1</p>
+    <p>Item2</p>
+    <p>Item3</p>
+  </div>
+  <div class="flexbox-centering">
+    <div class="child">Centered content.</div>
+  </div>
+</body>
+
+</html>
